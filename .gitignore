@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Virtualenv
+venv/
+.env
+*.env
+
+# Django
+db.sqlite3
+media/
+staticfiles/        # se você usa collectstatic para produção
+# static/           # (opcional) só ignore se sua pasta static for toda gerada
+
+# Editores/SO
+.DS_Store
+*.swp
+.vscode/
+.idea/
