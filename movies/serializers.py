@@ -2,9 +2,20 @@ from rest_framework import serializers
 from movies.models import Movies
 
 class MoviesSerializer(serializers.ModelSerializer):
+    rate = serializers.SerializerMethodField(read_only=True)
+    
+   
     class Meta:
         model = Movies
         fields = '__all__'
+        
+     # somar todas as avaliações de um filme
+    def get_rate(self, obj):
+        reviews = obj.reviews.all()
+        if not reviews:
+            return 0
+        total_stars = sum(review.stars for review in reviews)
+        return total_stars / len(reviews)
         
     def validate_release_date(self, value):
         if value.year < 1990:
