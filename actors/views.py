@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
 from actors.models import Actor
-from  actors.serializers import ActorSerializer
+from actors.serializers import ActorSerializer
 
 
 class ActorCreateListView(generics.ListCreateAPIView):
