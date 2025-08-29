@@ -2,7 +2,7 @@
 <div id="readme" style="font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #111;">
   <h1 style="margin-bottom: 0.2rem;">Flix API</h1>
   <p style="margin-top: 0; max-width: 900px;">
-    API para gerenciamento de filmes, atores, gêneros e avaliações. Este projeto foi desenvolvido em Python com Django REST Framework, seguindo boas práticas de arquitetura e organização de código.
+    API para gerenciamento de filmes, atores, gêneros e avaliações. Este projeto foi desenvolvido em Python com Django REST Framework, com autenticação JWT e controle de permissões por modelo.
   </p>
 
   <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 1.25rem 0;" />
@@ -16,7 +16,8 @@
       <li><a href="#instalacao">Instalação</a></li>
       <li><a href="#configuracao">Configuração do Ambiente</a></li>
       <li><a href="#execucao">Execução do Servidor</a></li>
-      <li><a href="#endpoints">Endpoints Principais</a></li>
+      <li><a href="#funcionalidades">Funcionalidades</a></li>
+      <li><a href="#endpoints">Endpoints</a></li>
       <li><a href="#roadmap">Próximos Passos</a></li>
       <li><a href="#contribuicao">Contribuição</a></li>
       <li><a href="#licenca">Licença</a></li>
@@ -31,6 +32,7 @@
     <li>Django REST Framework</li>
     <li>SQLite (padrão; adaptável para PostgreSQL/MySQL)</li>
     <li>Virtualenv para isolamento de dependências</li>
+    <li>SimpleJWT (autenticação via tokens JWT)</li>
   </ul>
 
   <!-- Arquitetura -->
@@ -46,6 +48,17 @@
 ├── manage.py      # Utilitário de gerenciamento (Django)
 └── requirements.txt
 </code></pre>
+
+  <!-- Funcionalidades -->
+  <h2 id="funcionalidades">Funcionalidades</h2>
+  <ul>
+    <li>Autenticação JWT com rotas de login, refresh e verificação.</li>
+    <li>Cadastro de usuários e endpoint de perfil do usuário autenticado.</li>
+    <li>CRUD completo para Atores, Gêneros, Filmes e Avaliações.</li>
+    <li>Política de autorização por permissões de modelo via <code>GlobalDefaultPermissionClass</code>.</li>
+    <li>Endpoint de estatísticas de filmes (totais, médias de avaliações).</li>
+    <li>Versionamento de rotas sob o prefixo <code>/api/v1/</code>.</li>
+  </ul>
 
   <!-- Instalacao -->
   <h2 id="instalacao">Instalação</h2>
@@ -72,6 +85,9 @@ venv\Scripts\activate      # Windows</code></pre>
   <p>Aplicar migrações e, opcionalmente, criar um superusuário para acessar o admin.</p>
   <pre style="background:#0b1021; color:#e6e6e6; padding:14px; border-radius:8px; overflow:auto;"><code class="language-bash">python manage.py migrate
 python manage.py createsuperuser  # opcional</code></pre>
+  <p style="margin-top: 0.5rem;">Permissões padrão de leitura podem ser atribuídas executando o comando abaixo, que cria (ou atualiza) o grupo <code>default_viewer</code> com todas as permissões <code>view_*</code> para os apps de domínio:</p>
+  <pre style="background:#0b1021; color:#e6e6e6; padding:14px; border-radius:8px; overflow:auto;"><code class="language-bash">python manage.py setup_default_permissions</code></pre>
+  <p>Novos usuários cadastrados são adicionados automaticamente ao grupo <code>default_viewer</code> (se existir).</p>
 
   <!-- Execucao -->
   <h2 id="execucao">Execução do Servidor</h2>
@@ -79,53 +95,48 @@ python manage.py createsuperuser  # opcional</code></pre>
   <p>Aplicação disponível em <code>http://127.0.0.1:8000/</code>.</p>
 
   <!-- Endpoints -->
-  <h2 id="endpoints">Endpoints Principais</h2>
-  <p>Rotas típicas para os recursos. Ajuste conforme sua implementação atual.</p>
-  <div style="overflow-x:auto;">
-    <table style="border-collapse: collapse; width: 100%; min-width: 520px;">
-      <thead>
-        <tr>
-          <th style="text-align:left; border-bottom:1px solid #e5e7eb; padding:8px;">Recurso</th>
-          <th style="text-align:left; border-bottom:1px solid #e5e7eb; padding:8px;">Método</th>
-          <th style="text-align:left; border-bottom:1px solid #e5e7eb; padding:8px;">Endpoint</th>
-          <th style="text-align:left; border-bottom:1px solid #e5e7eb; padding:8px;">Descrição</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td style="border-bottom:1px solid #f0f0f0; padding:8px;">Filmes</td>
-          <td style="border-bottom:1px solid #f0f0f0; padding:8px;">GET</td>
-          <td style="border-bottom:1px solid #f0f0f0; padding:8px;"><code>/movies/</code></td>
-          <td style="border-bottom:1px solid #f0f0f0; padding:8px;">Lista todos os filmes</td>
-        </tr>
-        <tr>
-          <td style="border-bottom:1px solid #f0f0f0; padding:8px;">Filmes</td>
-          <td style="border-bottom:1px solid #f0f0f0; padding:8px;">POST</td>
-          <td style="border-bottom:1px solid #f0f0f0; padding:8px;"><code>/movies/</code></td>
-          <td style="border-bottom:1px solid #f0f0f0; padding:8px;">Cria um novo filme</td>
-        </tr>
-        <tr>
-          <td style="border-bottom:1px solid #f0f0f0; padding:8px;">Gêneros</td>
-          <td style="border-bottom:1px solid #f0f0f0; padding:8px;">GET</td>
-          <td style="border-bottom:1px solid #f0f0f0; padding:8px;"><code>/genres/</code></td>
-          <td style="border-bottom:1px solid #f0f0f0; padding:8px;">Lista todos os gêneros</td>
-        </tr>
-        <tr>
-          <td style="border-bottom:1px solid #f0f0f0; padding:8px;">Atores</td>
-          <td style="border-bottom:1px solid #f0f0f0; padding:8px;">GET</td>
-          <td style="border-bottom:1px solid #f0f0f0; padding:8px;"><code>/actors/</code></td>
-          <td style="border-bottom:1px solid #f0f0f0; padding:8px;">Lista todos os atores</td>
-        </tr>
-        <tr>
-          <td style="border-bottom:1px solid #f0f0f0; padding:8px;">Avaliações</td>
-          <td style="border-bottom:1px solid #f0f0f0; padding:8px;">GET</td>
-          <td style="border-bottom:1px solid #f0f0f0; padding:8px;"><code>/reviews/</code></td>
-          <td style="border-bottom:1px solid #f0f0f0; padding:8px;">Lista todas as avaliações</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <p style="font-size: 0.95em; color:#444; margin-top: 0.75rem;">Observação: a nomenclatura e a estrutura dos endpoints podem variar de acordo com as <em>views</em> e <em>serializers</em> configurados no projeto.</p>
+  <h2 id="endpoints">Endpoints</h2>
+  <p>Todos os endpoints abaixo estão sob o prefixo <code>/api/v1/</code> e exigem autenticação (JWT), exceto onde indicado.</p>
+
+  <h3 style="margin-bottom: 0.4rem;">Autenticação</h3>
+  <ul>
+    <li><code>POST /api/v1/authentication/register/</code> — cadastro (acesso público).</li>
+    <li><code>POST /api/v1/authentication/token/</code> — login, retorna <code>access</code> e <code>refresh</code>.</li>
+    <li><code>POST /api/v1/authentication/token/refresh/</code> — renova <code>access</code>.</li>
+    <li><code>POST /api/v1/authentication/token/verify/</code> — verifica token.</li>
+    <li><code>GET /api/v1/authentication/me/</code> — dados do usuário autenticado.</li>
+  </ul>
+
+  <h3 style="margin-bottom: 0.4rem;">Filmes</h3>
+  <ul>
+    <li><code>GET/POST /api/v1/movies/</code> — lista/cria filmes.</li>
+    <li><code>GET/PUT/PATCH/DELETE /api/v1/movies/&lt;pk&gt;/</code> — detalhe/atualiza/remove.</li>
+    <li><code>GET /api/v1/movies/stats/</code> — estatísticas: total de filmes, total por gênero, total de reviews e média geral de estrelas.</li>
+  </ul>
+
+  <h3 style="margin-bottom: 0.4rem;">Gêneros</h3>
+  <ul>
+    <li><code>GET/POST /api/v1/genres/</code> — lista/cria gêneros.</li>
+    <li><code>GET/PUT/PATCH/DELETE /api/v1/genres/&lt;pk&gt;/</code> — detalhe/atualiza/remove.</li>
+  </ul>
+
+  <h3 style="margin-bottom: 0.4rem;">Atores</h3>
+  <ul>
+    <li><code>GET/POST /api/v1/actors/</code> — lista/cria atores.</li>
+    <li><code>GET/PUT/PATCH/DELETE /api/v1/actors/&lt;id&gt;/</code> — detalhe/atualiza/remove.</li>
+  </ul>
+
+  <h3 style="margin-bottom: 0.4rem;">Avaliações</h3>
+  <ul>
+    <li><code>GET/POST /api/v1/reviews/</code> — lista/cria avaliações.</li>
+    <li><code>GET/PUT/PATCH/DELETE /api/v1/reviews/&lt;pk&gt;/</code> — detalhe/atualiza/remove.</li>
+  </ul>
+
+  <p style="font-size: 0.95em; color:#444; margin-top: 0.5rem;">
+    Observações:
+    <br />• O serializer de filmes expõe o campo somente leitura <code>rate</code> (média de estrelas das avaliações).
+    <br />• Validações: <code>release_date</code> não pode ser anterior a 1990; <code>resume</code> com no máximo 100 caracteres.
+  </p>
 
   <!-- Autenticacao -->
   <h2 id="auth">Autenticação e Cadastro</h2>
@@ -137,19 +148,56 @@ python manage.py createsuperuser  # opcional</code></pre>
     <li><code>POST /api/v1/authentication/token/verify/</code> – verifica validade do token.</li>
     <li><code>GET /api/v1/authentication/me/</code> – dados do usuário autenticado.</li>
   </ul>
-  <p>
-    As rotas de domínio exigem <strong>permissões de modelo</strong> via <code>GlobalDefaultPermissionClass</code>. Para permitir consultas (GET) após o cadastro, crie o grupo padrão:
+  <p style="margin-top: 0.5rem;">
+    Política de autorização: todas as views de domínio usam <code>IsAuthenticated</code> + <code>GlobalDefaultPermissionClass</code>.
+    O mapeamento de método → permissão de modelo é:
   </p>
-  <pre style="background:#0b1021; color:#e6e6e6; padding:14px; border-radius:8px; overflow:auto;"><code class="language-bash">python manage.py setup_default_permissions</code></pre>
-  <p>Novos usuários são automaticamente adicionados ao grupo <code>default_viewer</code> (se existir).</p>
+  <pre style="background:#0b1021; color:#e6e6e6; padding:14px; border-radius:8px; overflow:auto;"><code>GET/HEAD/OPTIONS → view_*
+POST              → add_*
+PUT/PATCH         → change_*
+DELETE            → delete_*</code></pre>
+  <p>Conceda permissões via grupos no admin do Django ou use o comando de setup de permissões (ver Configuração do Ambiente).</p>
+
+  <!-- Exemplos -->
+  <h3 style="margin-top: 1rem;">Exemplos de uso (cURL)</h3>
+  <pre style="background:#0b1021; color:#e6e6e6; padding:14px; border-radius:8px; overflow:auto;"><code class="language-bash"># 1) Cadastro
+curl -X POST http://127.0.0.1:8000/api/v1/authentication/register/ \
+  -H "Content-Type: application/json" \
+  -d '{"username":"alice","email":"alice@example.com","password":"secret123","password2":"secret123"}'
+
+# 2) Login (JWT)
+curl -X POST http://127.0.0.1:8000/api/v1/authentication/token/ \
+  -H "Content-Type: application/json" \
+  -d '{"username":"alice","password":"secret123"}'
+# → copie o valor de access
+
+# 3) Listar filmes
+curl http://127.0.0.1:8000/api/v1/movies/ -H "Authorization: Bearer &lt;ACCESS_TOKEN&gt;"
+
+# 4) Estatísticas de filmes
+curl http://127.0.0.1:8000/api/v1/movies/stats/ -H "Authorization: Bearer &lt;ACCESS_TOKEN&gt;"</code></pre>
+
+  <!-- Scripts utilitarios -->
+  <h3 style="margin-top: 1rem;">Scripts Utilitários</h3>
+  <p>Há um smoke test para o endpoint de estatísticas em <code>scripts/smoke_stats.py</code> que cria dados mínimos e imprime o JSON de resultado:</p>
+  <pre style="background:#0b1021; color:#e6e6e6; padding:14px; border-radius:8px; overflow:auto;"><code class="language-bash">python manage.py shell -c "import scripts.smoke_stats as s; s.run()"</code></pre>
 
   <!-- Roadmap -->
   <h2 id="roadmap">Próximos Passos</h2>
   <ul>
     <li>Documentação interativa com Swagger ou Redoc.</li>
-    <li>Documentação interativa com Swagger ou Redoc.</li>
     <li>Testes automatizados (unitários e integração).</li>
-    <li>Versionamento da API (ex.: <code>/api/v1/</code>).</li>
+    <li>Paginação, filtros e ordenação nos endpoints de lista.</li>
+    <li>Polir validações e mensagens de erro.</li>
+  </ul>
+
+  <!-- Notas de Producao -->
+  <h3 style="margin-top: 0.75rem;">Notas para Produção</h3>
+  <ul>
+    <li>Definir <code>DEBUG=False</code> e <code>ALLOWED_HOSTS</code> adequados.</li>
+    <li>Configurar banco de dados gerenciado (ex.: PostgreSQL) e variáveis de ambiente.</li>
+    <li>Avaliar tempos de expiração do JWT (atualmente <code>ACCESS_TOKEN_LIFETIME=365 dias</code>, <code>REFRESH=5 anos</code> em <code>app/settings.py</code>).</li>
+    <li>Executar atrás de ASGI (Uvicorn/Daphne) e proxy reverso (Nginx).</li>
   </ul>
 
   <!-- Contribuicao -->
@@ -170,5 +218,6 @@ python manage.py createsuperuser  # opcional</code></pre>
   <p style="font-size: 0.92em; color:#555;">Dicas:
     <br />• Para ambientes de produção, considere <strong>PostgreSQL</strong> como banco de dados e um servidor ASGI (Daphne/Uvicorn) por trás de um <em>reverse proxy</em>.
     <br />• Configure variáveis de ambiente para credenciais e chaves, evitando expô-las no controle de versão.
+    <br />• Admin do Django disponível em <code>/admin/</code> para gerenciar permissões e dados.
   </p>
 </div>
