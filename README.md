@@ -127,10 +127,26 @@ python manage.py createsuperuser  # opcional</code></pre>
   </div>
   <p style="font-size: 0.95em; color:#444; margin-top: 0.75rem;">Observação: a nomenclatura e a estrutura dos endpoints podem variar de acordo com as <em>views</em> e <em>serializers</em> configurados no projeto.</p>
 
+  <!-- Autenticacao -->
+  <h2 id="auth">Autenticação e Cadastro</h2>
+  <p>Autenticação via JWT (SimpleJWT) já configurada. Fluxos:</p>
+  <ul>
+    <li><code>POST /api/v1/authentication/register/</code> – cria usuário com <em>password</em> seguro. Campos: <code>username</code>, <code>email</code>, <code>password</code>, <code>password2</code>, <code>first_name</code>, <code>last_name</code>.</li>
+    <li><code>POST /api/v1/authentication/token/</code> – login, retorna <code>access</code> e <code>refresh</code>.</li>
+    <li><code>POST /api/v1/authentication/token/refresh/</code> – renova <code>access</code>.</li>
+    <li><code>POST /api/v1/authentication/token/verify/</code> – verifica validade do token.</li>
+    <li><code>GET /api/v1/authentication/me/</code> – dados do usuário autenticado.</li>
+  </ul>
+  <p>
+    As rotas de domínio exigem <strong>permissões de modelo</strong> via <code>GlobalDefaultPermissionClass</code>. Para permitir consultas (GET) após o cadastro, crie o grupo padrão:
+  </p>
+  <pre style="background:#0b1021; color:#e6e6e6; padding:14px; border-radius:8px; overflow:auto;"><code class="language-bash">python manage.py setup_default_permissions</code></pre>
+  <p>Novos usuários são automaticamente adicionados ao grupo <code>default_viewer</code> (se existir).</p>
+
   <!-- Roadmap -->
   <h2 id="roadmap">Próximos Passos</h2>
   <ul>
-    <li>Adicionar autenticação JWT para segurança da API.</li>
+    <li>Documentação interativa com Swagger ou Redoc.</li>
     <li>Documentação interativa com Swagger ou Redoc.</li>
     <li>Testes automatizados (unitários e integração).</li>
     <li>Versionamento da API (ex.: <code>/api/v1/</code>).</li>
