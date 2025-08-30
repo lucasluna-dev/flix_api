@@ -3,13 +3,19 @@ from rest_framework.permissions import IsAuthenticated
 from django.db.models import Count, Avg
 from app.permission import GlobalDefaultPermissionClass
 from movies.models import Movies
-from movies.serializers import MoviesSerializer
+from movies.serializers import MoviesSerializer, MovieListDetailSerializer
 from reviews.models import Review
 
 class MoviesCreateListView(generics.ListCreateAPIView): 
     permission_classes = (IsAuthenticated,GlobalDefaultPermissionClass,)
     queryset = Movies.objects.all()
-    serializer_class = MoviesSerializer 
+    #serializer_class = MoviesSerializer 
+    
+    # aplicando o conceito de backend for frontend (BFF)
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return MovieListDetailSerializer
+        return MoviesSerializer
     
 
 class MoviesRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
